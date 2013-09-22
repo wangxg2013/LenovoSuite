@@ -36,6 +36,9 @@
     <ClInclude Include="LSS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MainFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
