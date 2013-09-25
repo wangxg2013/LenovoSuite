@@ -14,6 +14,7 @@
 #pragma warning(disable:4996)
 #include <atlapp.h>
 #pragma warning(default:4996)
+#include <atlmisc.h>
 #include <atlframe.h>
 
 // C RunTime Header Files
