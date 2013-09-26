@@ -148,6 +148,7 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppBox.h" />
     <ClInclude Include="LSS.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="Resource.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AppBox.cpp" />
     <ClCompile Include="LSS.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -58,6 +58,7 @@ int Run(LPTSTR lpstrCmdLine, int nCmdShow)
 	}
 
 	wndMain.ShowWindow(nCmdShow);
+	wndMain.OnInitUpdate();
 
 	int nRet = theLoop.Run();
 
