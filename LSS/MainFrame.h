@@ -7,7 +7,7 @@ class CMainFrame : public CFrameWindowImpl<CMainFrame>
 {
 public:
 	// DECLARE_FRAME_WND_CLASS(NULL, IDR_MAINFRAME)
-	DECLARE_FRAME_WND_CLASS_EX(L"LenovoWindow", IDS_APP_TITLE, CS_DBLCLKS | CS_DROPSHADOW | CS_HREDRAW | CS_VREDRAW, COLOR_WINDOW)
+	DECLARE_FRAME_WND_CLASS_EX(L"LenovoWindow", IDS_APP_TITLE, CS_HREDRAW | CS_VREDRAW, COLOR_WINDOW)
 
 	BEGIN_MSG_MAP(CMainFrame)
 		MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBkGnd)
@@ -26,12 +26,12 @@ public:
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 	{
 		BOOL bEnable = FALSE;
-		::DwmIsCompositionEnabled(&bEnable);
+		// ::DwmIsCompositionEnabled(&bEnable);
 		if (bEnable){
 			m_brushBk = ::CreateSolidBrush(COLORREF(0));
 		}
 		else{
-			m_brushBk = ::CreateSolidBrush(COLOR_WINDOW);
+			m_brushBk = ::CreateSolidBrush(RGB(220, 220, 220));
 		}
 
 		bHandled = TRUE;
@@ -47,7 +47,7 @@ public:
 
 	void OnInitUpdate()
 	{
-		BOOL bEnable = FALSE;
+		/*BOOL bEnable = FALSE;
 		::DwmIsCompositionEnabled(&bEnable);
 		if (bEnable){
 			MARGINS margins;
@@ -56,7 +56,7 @@ public:
 			margins.cyTopHeight = 0;
 			margins.cyBottomHeight = 0;
 			::DwmExtendFrameIntoClientArea(m_hWnd, &margins);
-		}
+		}*/
 
 		// create usb blocker appbox
 		CRect rcUsbBlocker = CalcWndPosForUsbBlocker();
@@ -87,6 +87,19 @@ public:
 		bHandled = TRUE;
 		return 0;
 	}
+
+public:
+	CRect CalcWindowPos(CRect &rcDisplay)
+	{
+		int nWidth = (int)(rcDisplay.Width() / 2.5f);
+		int nHeight = (int)(nWidth * 0.9f);
+		int nPosX = (rcDisplay.Width() - nWidth) / 2;
+		int nPosY = (rcDisplay.Height() - nHeight) / 2;
+		WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
+
+		return rcMain;
+	}
+
 private:
 	HBRUSH m_brushBk;
 	int m_nMargin;

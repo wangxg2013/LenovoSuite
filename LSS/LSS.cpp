@@ -40,18 +40,13 @@ int Run(LPTSTR lpstrCmdLine, int nCmdShow)
 	g_appModule.AddMessageLoop(&theLoop);
 
 	CMainFrame wndMain;
-
 	// central the window
-	int nWidthScreen = ::GetSystemMetrics(SM_CXFULLSCREEN);
-	int nHeightScreen = ::GetSystemMetrics(SM_CYFULLSCREEN);
+	CRect rcDisplay(0, 0, 0, 0);
+	rcDisplay.right = ::GetSystemMetrics(SM_CXFULLSCREEN);
+	rcDisplay.bottom = ::GetSystemMetrics(SM_CYFULLSCREEN);
+	CRect rcMain = wndMain.CalcWindowPos(rcDisplay);
 
-	int nWidth = 488, nHeight = 450;
-	int nPosX = (nWidthScreen - nWidth) / 2;
-	int nPosY = (nHeightScreen - nHeight) / 2;
-	WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
-
-	if (wndMain.CreateEx(NULL, rcMain, WS_CAPTION | WS_CLIPCHILDREN | WS_MINIMIZEBOX | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU,
-		WS_EX_APPWINDOW) == NULL)
+	if (wndMain.CreateEx(NULL, rcMain, WS_CLIPCHILDREN | WS_MINIMIZEBOX | WS_VISIBLE | WS_SYSMENU, 0) == NULL)
 	{
 		ATLTRACE(_T("Main window creation failed!\n"));
 		return 0;
