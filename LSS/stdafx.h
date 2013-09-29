@@ -17,6 +17,9 @@
 #include <atlmisc.h>
 #include <atlframe.h>
 
+#include <gdiplus.h>
+#pragma comment(lib, "Gdiplus.lib")
+
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>

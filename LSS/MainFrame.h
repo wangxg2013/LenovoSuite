@@ -2,6 +2,10 @@
 #pragma comment(lib, "Dwmapi")
 #include <dwmapi.h>
 #include "AppBox.h"
+#include "UsbBlocker.h"
+#include "OneKeyRecovery.h"
+#include "PwdManager.h"
+#include "APS.h"
 
 class CMainFrame : public CFrameWindowImpl<CMainFrame>
 {
@@ -21,6 +25,19 @@ public:
 	{
 		m_nMargin = 5;
 		m_nPadding = 5;
+
+		m_pUsbBlocker = NULL;
+		m_pOneKeyRecovery = NULL;
+		m_pPwdManager = NULL;
+		m_pAPS = NULL;
+	}
+
+	virtual ~CMainFrame()
+	{
+		if (m_pUsbBlocker != NULL) delete m_pUsbBlocker;
+		if (m_pOneKeyRecovery != NULL) delete m_pOneKeyRecovery;
+		if (m_pPwdManager != NULL) delete m_pPwdManager;
+		if (m_pAPS != NULL) delete m_pAPS;
 	}
 
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
@@ -60,19 +77,23 @@ public:
 
 		// create usb blocker appbox
 		CRect rcUsbBlocker = CalcWndPosForUsbBlocker();
-		m_appboxUsbBlocker.Create(m_hWnd, rcUsbBlocker, L"USB Blocker");
+		m_pUsbBlocker = new CUsbBlocker();
+		m_pUsbBlocker->Create(m_hWnd, rcUsbBlocker, L"USB Blocker");
 
 		// create one key recovery appbox
 		CRect rcOKR = CalcWndPosForOneKeyRecovery();
-		m_appboxOneKeyRecovery.Create(m_hWnd, rcOKR, L"OneKey Recovery");
+		m_pOneKeyRecovery = new COneKeyRecovery();
+		m_pOneKeyRecovery->Create(m_hWnd, rcOKR, L"OneKey Recovery");
 
 		// create password manager appbox
 		CRect rcPwdManager = CalcWndPosForPwdManager();
-		m_appboxPwdManager.Create(m_hWnd, rcPwdManager, L"Password Manager");
+		m_pPwdManager = new CPwdManager();
+		m_pPwdManager->Create(m_hWnd, rcPwdManager, L"Password Manager");
 
 		// create password manager appbox
 		CRect rcAPS = CalcWndPosForAPS();
-		m_appboxAPS.Create(m_hWnd, rcAPS, L"APS");
+		m_pAPS = new CAPS();
+		m_pAPS->Create(m_hWnd, rcAPS, L"APS");
 	}
 
 	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -104,10 +125,10 @@ private:
 	HBRUSH m_brushBk;
 	int m_nMargin;
 	int m_nPadding;
-	CAppBox m_appboxUsbBlocker;
-	CAppBox m_appboxOneKeyRecovery;
-	CAppBox m_appboxPwdManager;
-	CAppBox m_appboxAPS;
+	CUsbBlocker *m_pUsbBlocker;
+	COneKeyRecovery *m_pOneKeyRecovery;
+	CPwdManager *m_pPwdManager;
+	CAPS *m_pAPS;
 
 
 	CRect CalcWndPosForUsbBlocker()

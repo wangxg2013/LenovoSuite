@@ -149,26 +149,44 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppBox.h" />
+    <ClInclude Include="APS.h" />
     <ClInclude Include="LSS.h" />
     <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="OneKeyRecovery.h" />
+    <ClInclude Include="PwdManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UsbBlocker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppBox.cpp" />
+    <ClCompile Include="APS.cpp" />
     <ClCompile Include="LSS.cpp" />
+    <ClCompile Include="OneKeyRecovery.cpp" />
+    <ClCompile Include="PwdManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UsbBlocker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LSS.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="APS.png" />
+    <Image Include="OKR.png" />
+    <Image Include="PwdManager.png" />
+    <Image Include="USB.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="AfterBuild">
+    <Message Text="Copy *.png" Importance="high" />
+    <Copy SourceFiles="$(ProjectDir)USB.png;$(ProjectDir)OKR.png;$(ProjectDir)PwdManager.png;$(ProjectDir)APS.png" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

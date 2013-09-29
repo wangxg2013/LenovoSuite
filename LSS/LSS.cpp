@@ -19,6 +19,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hr = ::CoInitialize(NULL);
 	ATLASSERT(SUCCEEDED(hr));
 
+	GdiplusStartupInput gdiInput;
+	ULONG_PTR gdiToken;
+	Gdiplus::GdiplusStartup(&gdiToken, &gdiInput, NULL);
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 
 	AtlInitCommonControls(ICC_COOL_CLASSES | ICC_BAR_CLASSES);
@@ -27,6 +31,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	ATLASSERT(SUCCEEDED(hr));
 
 	int nRet = Run(lpCmdLine, nCmdShow);
+
+	Gdiplus::GdiplusShutdown(gdiToken);
 
 	g_appModule.Term();
 	::CoUninitialize();
