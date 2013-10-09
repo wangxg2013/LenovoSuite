@@ -1,4 +1,5 @@
 #pragma once
+#include "LSS.h"
 using namespace Gdiplus;
 
 class CAppBox : public CWindowImpl<CAppBox>
@@ -11,6 +12,7 @@ public:
 		MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBkGnd)
 		MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
 		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
+		MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp)
 	END_MSG_MAP()
 public:
 	CAppBox(){
@@ -28,7 +30,10 @@ public:
 			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 			L"Œ¢»Ì—≈∫⁄");
 	}
+
 	virtual ~CAppBox(){}
+
+	void SetYLinePos(int y){ m_nYLinePos = y; }
 
 protected:
 	virtual LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -37,7 +42,7 @@ protected:
 		GetClientRect(&rcClient);
 
 		int x = 8;
-		int y = rcClient.bottom - rcClient.Height() / 5;
+		int y = rcClient.bottom + m_nYLinePos;
 
 		wchar_t wszBuf[128];
 		::GetWindowText(m_hWnd, wszBuf, 128);
@@ -53,7 +58,7 @@ protected:
 		::SetTextColor(ps.hdc, m_bHighLight ? m_colorText2 : m_colorTitle);
 		::DrawText(ps.hdc, wszBuf, (int) wcslen(wszBuf), CRect(x, y, rcClient.right, rcClient.bottom), DT_VCENTER | DT_SINGLELINE);
 
-		wcscpy_s(wszBuf, L"Œ¥∆Ù”√");
+		LoadString(g_appModule.m_hInst, IDS_DISABLED, wszBuf, 120);
 		SetTextColor(ps.hdc, m_bHighLight ? m_colorText2 : m_colorText);
 		::DrawText(ps.hdc, wszBuf, (int) wcslen(wszBuf), CRect(0, 4, rcClient.right - 8, rcClient.bottom), DT_RIGHT | DT_SINGLELINE);
 		SelectObject(ps.hdc, hFontOld);
@@ -80,7 +85,7 @@ protected:
 	{
 		CRect rcClient;
 		GetClientRect(&rcClient);
-		int y = rcClient.bottom - rcClient.Height() / 5;
+		int y = rcClient.bottom + m_nYLinePos;
 
 	
 		HDC hdc = GetDC();
@@ -132,8 +137,14 @@ protected:
 		return 0L;
 	}
 
-protected:
-	virtual void OnDrawImage(Graphics &g, const CRect &rc){}
+	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		WinExec("Notepad.exe", SW_SHOW);
+		bHandled = true;
+		return 0L;
+	}
+
+	virtual void OnDrawImage(Graphics &g, const CRect &rc) = 0;
 protected:
 	COLORREF m_colorText;
 	COLORREF m_colorText2;
@@ -146,5 +157,7 @@ protected:
 	CPen m_penLineA;
 	CPen m_penLineB;
 	CFont m_fontMsBlack;
+
+	int m_nYLinePos;
 };
 

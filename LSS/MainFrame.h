@@ -1,6 +1,8 @@
 #pragma once
 #pragma comment(lib, "Dwmapi")
 #include <dwmapi.h>
+#include "resource.h"
+#include "LSS.h"
 #include "AppBox.h"
 #include "UsbBlocker.h"
 #include "OneKeyRecovery.h"
@@ -67,33 +69,48 @@ public:
 		/*BOOL bEnable = FALSE;
 		::DwmIsCompositionEnabled(&bEnable);
 		if (bEnable){
-			MARGINS margins;
-			margins.cxLeftWidth = -1;
-			margins.cxRightWidth = 0;
-			margins.cyTopHeight = 0;
-			margins.cyBottomHeight = 0;
-			::DwmExtendFrameIntoClientArea(m_hWnd, &margins);
+		MARGINS margins;
+		margins.cxLeftWidth = -1;
+		margins.cxRightWidth = 0;
+		margins.cyTopHeight = 0;
+		margins.cyBottomHeight = 0;
+		::DwmExtendFrameIntoClientArea(m_hWnd, &margins);
 		}*/
+
+		wchar_t wszBoxName[128];
+		auto size = CalcAppBoxSize();
+		int yLinePos = - size.cy / 5;
 
 		// create usb blocker appbox
 		CRect rcUsbBlocker = CalcWndPosForUsbBlocker();
 		m_pUsbBlocker = new CUsbBlocker();
-		m_pUsbBlocker->Create(m_hWnd, rcUsbBlocker, L"USB Blocker");
+		LoadString(g_appModule.m_hInst, IDS_USB_BLOCKER, wszBoxName, 120);
+		m_pUsbBlocker->SetYLinePos(yLinePos);
+		m_pUsbBlocker->Create(m_hWnd, rcUsbBlocker, wszBoxName);
 
 		// create one key recovery appbox
 		CRect rcOKR = CalcWndPosForOneKeyRecovery();
 		m_pOneKeyRecovery = new COneKeyRecovery();
-		m_pOneKeyRecovery->Create(m_hWnd, rcOKR, L"OneKey Recovery");
+		LoadString(g_appModule.m_hInst, IDS_OKR, wszBoxName, 120);
+		m_pOneKeyRecovery->SetYLinePos(yLinePos);
+		m_pOneKeyRecovery->Create(m_hWnd, rcOKR, wszBoxName);
 
 		// create password manager appbox
 		CRect rcPwdManager = CalcWndPosForPwdManager();
 		m_pPwdManager = new CPwdManager();
-		m_pPwdManager->Create(m_hWnd, rcPwdManager, L"Password Manager");
+		LoadString(g_appModule.m_hInst, IDS_PWD_MGR, wszBoxName, 120);
+		m_pPwdManager->SetYLinePos(yLinePos);
+		m_pPwdManager->Create(m_hWnd, rcPwdManager, wszBoxName);
 
 		// create password manager appbox
-		CRect rcAPS = CalcWndPosForAPS();
-		m_pAPS = new CAPS();
-		m_pAPS->Create(m_hWnd, rcAPS, L"APS");
+		if (g_appConfig.IsSupportAPS())
+		{
+			CRect rcAPS = CalcWndPosForAPS();
+			m_pAPS = new CAPS();
+			LoadString(g_appModule.m_hInst, IDS_APS, wszBoxName, 120);
+			m_pAPS->SetYLinePos(yLinePos);
+			m_pAPS->Create(m_hWnd, rcAPS, wszBoxName);
+		}
 	}
 
 	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -112,8 +129,8 @@ public:
 public:
 	CRect CalcWindowPos(CRect &rcDisplay)
 	{
-		int nWidth = (int)(rcDisplay.Width() / 2.5f);
-		int nHeight = (int)(nWidth * 0.9f);
+		int nWidth = (int) (rcDisplay.Width() / 2.5f);
+		int nHeight = (int) (nWidth * 0.9f);
 		int nPosX = (rcDisplay.Width() - nWidth) / 2;
 		int nPosY = (rcDisplay.Height() - nHeight) / 2;
 		WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
@@ -130,7 +147,6 @@ private:
 	CPwdManager *m_pPwdManager;
 	CAPS *m_pAPS;
 
-
 	CRect CalcWndPosForUsbBlocker()
 	{
 		CRect rcWnd;
@@ -139,7 +155,14 @@ private:
 
 		CSize size = CalcAppBoxSize();
 		rcWnd.right = rcWnd.left + size.cx;
-		rcWnd.bottom = rcWnd.top + size.cy;
+		if (g_appConfig.IsSupportAPS()){
+			rcWnd.bottom = rcWnd.top + size.cy;
+		}
+		else{
+			RECT rcClient;
+			GetClientRect(&rcClient);
+			rcWnd.bottom = rcClient.bottom - (m_nMargin + m_nPadding);
+		}
 
 		return rcWnd;
 	}
@@ -166,12 +189,21 @@ private:
 		GetClientRect(&rcClient);
 
 		CRect rcWnd;
-		rcWnd.left = m_nMargin + m_nPadding;
-		rcWnd.bottom = rcClient.bottom - (m_nMargin + m_nPadding);
-
 		CSize size = CalcAppBoxSize();
-		rcWnd.right = rcWnd.left + size.cx;
-		rcWnd.top = rcWnd.bottom - size.cy;
+		if (g_appConfig.IsSupportAPS()){
+			rcWnd.left = m_nMargin + m_nPadding;
+			rcWnd.bottom = rcClient.bottom - (m_nMargin + m_nPadding);
+			
+			rcWnd.right = rcWnd.left + size.cx;
+			rcWnd.top = rcWnd.bottom - size.cy;
+		}
+		else{
+			rcWnd.right = rcClient.right - (m_nMargin + m_nPadding);
+			rcWnd.bottom = rcClient.bottom - (m_nMargin + m_nPadding);
+
+			rcWnd.left = rcWnd.right - size.cx;
+			rcWnd.top = rcWnd.bottom - size.cy;
+		}
 
 		return rcWnd;
 	}

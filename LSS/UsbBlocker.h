@@ -6,6 +6,7 @@ class CUsbBlocker :	public CAppBox
 {
 public:
 	BEGIN_MSG_MAP(CUsbBlocker)
+		MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp);
 		CHAIN_MSG_MAP(CAppBox)
 	END_MSG_MAP()
 public:
@@ -16,6 +17,13 @@ public:
 		delete m_pImageUSB;
 	};
 protected:
+	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		WinExec("calc.exe", SW_SHOW);
+		bHandled = true;
+		return 0L;
+	}
+
 	virtual void OnDrawImage(Graphics &g, const CRect &rc)
 	{
 		int nWidth = (int)(rc.Width() / 2.5f);

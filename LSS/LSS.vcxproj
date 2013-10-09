@@ -143,12 +143,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="App.config">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    </None>
     <None Include="LSS.ico" />
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppBox.h" />
+    <ClInclude Include="AppConfig.h" />
     <ClInclude Include="APS.h" />
     <ClInclude Include="LSS.h" />
     <ClInclude Include="MainFrame.h" />
@@ -161,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppBox.cpp" />
+    <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="APS.cpp" />
     <ClCompile Include="LSS.cpp" />
     <ClCompile Include="OneKeyRecovery.cpp" />
@@ -188,5 +196,6 @@
   <Target Name="AfterBuild">
     <Message Text="Copy *.png" Importance="high" />
     <Copy SourceFiles="$(ProjectDir)USB.png;$(ProjectDir)OKR.png;$(ProjectDir)PwdManager.png;$(ProjectDir)APS.png" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)App.config" DestinationFiles="$(OutDir)$(ProjectName).$(OutputType).config" SkipUnchangedFiles="true" />
   </Target>
 </Project>

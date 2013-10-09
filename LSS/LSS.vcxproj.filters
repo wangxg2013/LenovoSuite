@@ -22,6 +22,7 @@
     <None Include="LSS.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -54,6 +55,9 @@
     <ClInclude Include="APS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AppConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +79,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="APS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

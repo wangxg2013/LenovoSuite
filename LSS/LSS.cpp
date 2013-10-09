@@ -6,6 +6,7 @@
 #include "MainFrame.h"
 
 CAppModule g_appModule;
+CAppConfig g_appConfig;
 
 int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT);
 
@@ -16,8 +17,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 
+	// Force Language to en-US or zh-CN
+	SetProcessPreferredUILanguages(MUI_LANGUAGE_NAME, L"en-US\0\0", NULL);
+	//SetProcessPreferredUILanguages(MUI_LANGUAGE_NAME, L"zh-CN\0\0", NULL);
+
+	wchar_t wcsBuf[250];
+	LoadString(hInstance, IDS_APP_TITLE, wcsBuf, 250);
+	
 	HRESULT hr = ::CoInitialize(NULL);
 	ATLASSERT(SUCCEEDED(hr));
+
+	g_appConfig.LoadConfig();
 
 	GdiplusStartupInput gdiInput;
 	ULONG_PTR gdiToken;
