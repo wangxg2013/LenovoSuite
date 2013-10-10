@@ -25,6 +25,19 @@ protected:
 
 		g.DrawImage(m_pImageOKR, rc.left + (rc.Width() - nWidth) / 2, rc.top + (rc.Height() - nHeight) / 2, nWidth, nHeight);
 	}
+
+	virtual bool IsInstalled()
+	{
+		HKEY hKeyOKR = NULL;
+		LSTATUS status = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, g_appConfig.GetInstallRegOKR(), 0, KEY_READ, &hKeyOKR);
+		if (status == ERROR_SUCCESS){
+			::RegCloseKey(hKeyOKR);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 private:
 		Image *m_pImageOKR;
 };

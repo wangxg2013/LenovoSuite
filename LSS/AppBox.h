@@ -29,12 +29,29 @@ public:
 		m_fontMsBlack.CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0,
 			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 			L"Î¢ÈíÑÅºÚ");
+
+		m_pwszStatus = new wchar_t[250];
 	}
 
-	virtual ~CAppBox(){}
+	virtual ~CAppBox()
+	{
+		delete[] m_pwszStatus;
+	}
 
 	void SetYLinePos(int y){ m_nYLinePos = y; }
 
+	virtual void OnInitUpdate()
+	{
+		bool bInstalled = IsInstalled();
+		if (bInstalled)
+		{
+			wsprintf(m_pwszStatus, L"Installed");
+		}
+		else
+		{
+			LoadString(g_appModule.m_hInst, IDS_NOT_INSTALLED, m_pwszStatus, 250);
+		}
+	}
 protected:
 	virtual LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
@@ -58,9 +75,8 @@ protected:
 		::SetTextColor(ps.hdc, m_bHighLight ? m_colorText2 : m_colorTitle);
 		::DrawText(ps.hdc, wszBuf, (int) wcslen(wszBuf), CRect(x, y, rcClient.right, rcClient.bottom), DT_VCENTER | DT_SINGLELINE);
 
-		LoadString(g_appModule.m_hInst, IDS_DISABLED, wszBuf, 120);
 		SetTextColor(ps.hdc, m_bHighLight ? m_colorText2 : m_colorText);
-		::DrawText(ps.hdc, wszBuf, (int) wcslen(wszBuf), CRect(0, 4, rcClient.right - 8, rcClient.bottom), DT_RIGHT | DT_SINGLELINE);
+		::DrawText(ps.hdc, m_pwszStatus, (int) wcslen(m_pwszStatus), CRect(0, 4, rcClient.right - 8, rcClient.bottom), DT_RIGHT | DT_SINGLELINE);
 		SelectObject(ps.hdc, hFontOld);
 		SetTextColor(ps.hdc, colorOld);
 
@@ -145,6 +161,7 @@ protected:
 	}
 
 	virtual void OnDrawImage(Graphics &g, const CRect &rc) = 0;
+	virtual bool IsInstalled(){ return false; };
 protected:
 	COLORREF m_colorText;
 	COLORREF m_colorText2;
@@ -159,5 +176,6 @@ protected:
 	CFont m_fontMsBlack;
 
 	int m_nYLinePos;
+	wchar_t *m_pwszStatus;
 };
 

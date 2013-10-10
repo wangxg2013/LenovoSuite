@@ -87,6 +87,7 @@ public:
 		LoadString(g_appModule.m_hInst, IDS_USB_BLOCKER, wszBoxName, 120);
 		m_pUsbBlocker->SetYLinePos(yLinePos);
 		m_pUsbBlocker->Create(m_hWnd, rcUsbBlocker, wszBoxName);
+		m_pUsbBlocker->OnInitUpdate();
 
 		// create one key recovery appbox
 		CRect rcOKR = CalcWndPosForOneKeyRecovery();
@@ -94,6 +95,7 @@ public:
 		LoadString(g_appModule.m_hInst, IDS_OKR, wszBoxName, 120);
 		m_pOneKeyRecovery->SetYLinePos(yLinePos);
 		m_pOneKeyRecovery->Create(m_hWnd, rcOKR, wszBoxName);
+		m_pOneKeyRecovery->OnInitUpdate();
 
 		// create password manager appbox
 		CRect rcPwdManager = CalcWndPosForPwdManager();
@@ -101,6 +103,7 @@ public:
 		LoadString(g_appModule.m_hInst, IDS_PWD_MGR, wszBoxName, 120);
 		m_pPwdManager->SetYLinePos(yLinePos);
 		m_pPwdManager->Create(m_hWnd, rcPwdManager, wszBoxName);
+		m_pPwdManager->OnInitUpdate();
 
 		// create password manager appbox
 		if (g_appConfig.IsSupportAPS())
@@ -110,6 +113,7 @@ public:
 			LoadString(g_appModule.m_hInst, IDS_APS, wszBoxName, 120);
 			m_pAPS->SetYLinePos(yLinePos);
 			m_pAPS->Create(m_hWnd, rcAPS, wszBoxName);
+			m_pAPS->OnInitUpdate();
 		}
 	}
 

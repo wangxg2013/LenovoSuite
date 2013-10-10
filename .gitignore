@@ -2,6 +2,7 @@
 *.opensdf
 *.suo
 *.user
+LSS/LSS.APS
 /ipch/
 Win32/
 x64/
