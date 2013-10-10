@@ -18,7 +18,7 @@ public:
 	CAppBox(){
 		m_colorText = RGB(0xf7, 0x7a, 0x00);
 		m_colorText2 = RGB(255, 255, 255);
-		m_brBk.CreateSolidBrush(RGB(200,200,200));
+		m_brBk.CreateSolidBrush(RGB(200, 200, 200));
 		m_brBk2.CreateSolidBrush(m_colorText);
 		m_bHighLight = false;
 
@@ -29,31 +29,24 @@ public:
 		m_fontMsBlack.CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0,
 			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 			L"Î¢ÈíÑÅºÚ");
-
-		m_pwszStatus = new wchar_t[250];
 	}
 
 	virtual ~CAppBox()
 	{
-		delete[] m_pwszStatus;
+		delete m_pImageLogo;
 	}
 
 	void SetYLinePos(int y){ m_nYLinePos = y; }
 
 	virtual void OnInitUpdate()
 	{
-		bool bInstalled = IsInstalled();
-		if (bInstalled)
-		{
-			wsprintf(m_pwszStatus, L"Installed");
-		}
-		else
-		{
-			LoadString(g_appModule.m_hInst, IDS_NOT_INSTALLED, m_pwszStatus, 250);
-		}
+		UpdateStatus(true);
 	}
 protected:
-	virtual LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	CString m_strStatus;
+	Image *m_pImageLogo = NULL;
+
+	LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		CRect rcClient;
 		GetClientRect(&rcClient);
@@ -76,7 +69,7 @@ protected:
 		::DrawText(ps.hdc, wszBuf, (int) wcslen(wszBuf), CRect(x, y, rcClient.right, rcClient.bottom), DT_VCENTER | DT_SINGLELINE);
 
 		SetTextColor(ps.hdc, m_bHighLight ? m_colorText2 : m_colorText);
-		::DrawText(ps.hdc, m_pwszStatus, (int) wcslen(m_pwszStatus), CRect(0, 4, rcClient.right - 8, rcClient.bottom), DT_RIGHT | DT_SINGLELINE);
+		::DrawText(ps.hdc, m_strStatus, m_strStatus.GetLength(), CRect(0, 4, rcClient.right - 8, rcClient.bottom), DT_RIGHT | DT_SINGLELINE);
 		SelectObject(ps.hdc, hFontOld);
 		SetTextColor(ps.hdc, colorOld);
 
@@ -89,7 +82,7 @@ protected:
 		rcBound.right = rcClient.right;
 		rcBound.bottom = y;
 
-		this->OnDrawImage(graphics, rcBound);
+		OnDrawImage(graphics, rcBound);
 
 		EndPaint(&ps);
 
@@ -103,10 +96,10 @@ protected:
 		GetClientRect(&rcClient);
 		int y = rcClient.bottom + m_nYLinePos;
 
-	
+
 		HDC hdc = GetDC();
 		HGDIOBJ hOldPen = SelectObject(hdc, GetStockObject(NULL_PEN));
-		HGDIOBJ hOldBrush = SelectObject(hdc, m_bHighLight?m_brBk2 : m_brBk);
+		HGDIOBJ hOldBrush = SelectObject(hdc, m_bHighLight ? m_brBk2 : m_brBk);
 		RoundRect(hdc, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, 8, 8);
 		SelectObject(hdc, hOldBrush);
 		SelectObject(hdc, hOldPen);
@@ -115,8 +108,8 @@ protected:
 		MoveToEx(hdc, 0, y, NULL);
 		LineTo(hdc, rcClient.right - 1, y);
 		SelectObject(hdc, m_penLineB);
-		MoveToEx(hdc, 0, y+1, NULL);
-		LineTo(hdc, rcClient.right - 1, y+1);
+		MoveToEx(hdc, 0, y + 1, NULL);
+		LineTo(hdc, rcClient.right - 1, y + 1);
 		SelectObject(hdc, hOldPen);
 
 		ReleaseDC(hdc);
@@ -160,9 +153,11 @@ protected:
 		return 0L;
 	}
 
-	virtual void OnDrawImage(Graphics &g, const CRect &rc) = 0;
-	virtual bool IsInstalled(){ return false; };
-protected:
+	virtual bool IsInstalled() = 0;
+	virtual void LoadStatusText() = 0;
+	virtual void LoadLogo(bool bDisabledImage) = 0;
+private:
+	bool m_bInstalled = false;
 	COLORREF m_colorText;
 	COLORREF m_colorText2;
 	COLORREF m_colorTitle;
@@ -176,6 +171,34 @@ protected:
 	CFont m_fontMsBlack;
 
 	int m_nYLinePos;
-	wchar_t *m_pwszStatus;
+
+	void UpdateStatus(bool bForce = false)
+	{
+		bool bInstalled = IsInstalled();
+		if (bForce || m_bInstalled != bInstalled){
+			m_bInstalled = bInstalled;
+			
+			LoadLogo(!bInstalled);
+
+			if (bInstalled){
+				LoadStatusText();
+			}
+			else{
+				wchar_t wszBuf[250];
+				LoadString(g_appModule.m_hInst, IDS_NOT_INSTALLED, wszBuf, 250);
+				m_strStatus = wszBuf;
+			}
+
+			Invalidate();
+		}
+	}
+
+	void OnDrawImage(Graphics &g, const CRect &rc)
+	{
+		int nWidth = (int) (rc.Width() / 2.5f);
+		int nHeight = m_pImageLogo->GetHeight() * nWidth / m_pImageLogo->GetWidth();
+
+		g.DrawImage(m_pImageLogo, rc.left + (rc.Width() - nWidth) / 2, rc.top + (rc.Height() - nHeight) / 2, nWidth, nHeight);
+	}
 };
 

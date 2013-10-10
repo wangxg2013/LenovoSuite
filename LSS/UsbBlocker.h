@@ -1,4 +1,5 @@
 #pragma once
+#include "resource.h"
 #include "AppBox.h"
 using namespace Gdiplus;
 
@@ -10,12 +11,13 @@ public:
 		CHAIN_MSG_MAP(CAppBox)
 	END_MSG_MAP()
 public:
-	CUsbBlocker(){
-		m_pImageUSB = new Image(L"USB.png");
-	};
-	virtual ~CUsbBlocker(){
-		delete m_pImageUSB;
-	};
+	CUsbBlocker()
+	{
+	}
+
+	virtual ~CUsbBlocker()
+	{
+	}
 protected:
 	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
@@ -24,14 +26,6 @@ protected:
 		return 0L;
 	}
 
-	virtual void OnDrawImage(Graphics &g, const CRect &rc)
-	{
-		int nWidth = (int)(rc.Width() / 2.5f);
-		int nHeight = m_pImageUSB->GetHeight() * nWidth/ m_pImageUSB->GetWidth();
-
-
-		g.DrawImage(m_pImageUSB, rc.left + (rc.Width() - nWidth)/2, rc.top + (rc.Height() - nHeight)/2, nWidth, nHeight);
-	}
 	
 	virtual bool IsInstalled()
 	{
@@ -45,7 +39,19 @@ protected:
 			return false;
 		}
 	}
-private:
-	Image *m_pImageUSB;
+
+	virtual void LoadStatusText()
+	{
+		// TODO: How to detect the USB Blocker's status?
+		wchar_t wszBuf[256];
+		LoadString(g_appModule.m_hInst, IDS_UNCONFIG, wszBuf, 256);
+		m_strStatus = wszBuf;
+	}
+
+	virtual void LoadLogo(bool bDisabledImage)
+	{
+		delete m_pImageLogo;
+		m_pImageLogo = bDisabledImage ? new Image(L"OKR_disabled.png") : new Image(L"OKR.png");
+	}
 };
 

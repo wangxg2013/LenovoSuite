@@ -186,8 +186,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="APS.png" />
+    <Image Include="APS_disabled.png" />
     <Image Include="OKR.png" />
+    <Image Include="OKR_disabled.png" />
     <Image Include="PwdManager.png" />
+    <Image Include="PwdManager_disabled.png" />
     <Image Include="USB.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -195,7 +198,7 @@
   </ImportGroup>
   <Target Name="AfterBuild">
     <Message Text="Copy *.png" Importance="high" />
-    <Copy SourceFiles="$(ProjectDir)USB.png;$(ProjectDir)OKR.png;$(ProjectDir)PwdManager.png;$(ProjectDir)APS.png" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)USB.png;$(ProjectDir)USB_disabled.png;$(ProjectDir)OKR.png;$(ProjectDir)OKR_disabled.png;$(ProjectDir)PwdManager.png;$(ProjectDir)PwdManager_disabled.png;$(ProjectDir)APS.png;$(ProjectDir)APS_disabled.png" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(ProjectDir)App.config" DestinationFiles="$(OutDir)$(ProjectName).$(OutputType).config" SkipUnchangedFiles="true" />
   </Target>
 </Project>

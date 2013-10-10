@@ -103,5 +103,14 @@
     <Image Include="PwdManager.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="OKR_disabled.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PwdManager_disabled.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="APS_disabled.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -10,22 +10,11 @@ public:
 public:
 	COneKeyRecovery()
 	{
-		m_pImageOKR = new Image(L"OKR.png");
 	}
 	virtual ~COneKeyRecovery()
 	{
-		delete m_pImageOKR;
 	}
 protected:
-	virtual void OnDrawImage(Graphics &g, const CRect &rc)
-	{
-		int nWidth = (int) (rc.Width() / 2.5f);
-		int nHeight = m_pImageOKR->GetHeight() * nWidth / m_pImageOKR->GetWidth();
-
-
-		g.DrawImage(m_pImageOKR, rc.left + (rc.Width() - nWidth) / 2, rc.top + (rc.Height() - nHeight) / 2, nWidth, nHeight);
-	}
-
 	virtual bool IsInstalled()
 	{
 		HKEY hKeyOKR = NULL;
@@ -38,7 +27,19 @@ protected:
 			return false;
 		}
 	}
-private:
-		Image *m_pImageOKR;
+
+	virtual void LoadStatusText()
+	{
+		// TODO: How to detect the status?
+		wchar_t wszBuf[256];
+		LoadString(g_appModule.m_hInst, IDS_NOT_BACKUP, wszBuf, 256);
+		m_strStatus = wszBuf;
+	}
+
+	virtual void LoadLogo(bool bDisabledImage)
+	{
+		delete m_pImageLogo;
+		m_pImageLogo = bDisabledImage ? new Image(L"OKR_disabled.png") : new Image(L"OKR.png");
+	}
 };
 

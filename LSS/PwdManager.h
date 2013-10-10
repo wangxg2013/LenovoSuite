@@ -10,22 +10,12 @@ public:
 public:
 	CPwdManager()
 	{
-		m_pImagePwdManager = new Image(L"PwdManager.png");
 	}
+
 	virtual ~CPwdManager()
 	{
-		delete m_pImagePwdManager;
 	}
 protected:
-	virtual void OnDrawImage(Graphics &g, const CRect &rc)
-	{
-		int nWidth = (int) (rc.Width() / 2.5f);
-		int nHeight = m_pImagePwdManager->GetHeight() * nWidth / m_pImagePwdManager->GetWidth();
-
-
-		g.DrawImage(m_pImagePwdManager, rc.left + (rc.Width() - nWidth) / 2, rc.top + (rc.Height() - nHeight) / 2, nWidth, nHeight);
-	}
-
 	virtual bool IsInstalled()
 	{
 		HKEY hKeyOKR = NULL;
@@ -38,7 +28,19 @@ protected:
 			return false;
 		}
 	}
-private:
-	Image *m_pImagePwdManager;
+
+	virtual void LoadStatusText()
+	{
+		// TODO: How to detect the status?
+		wchar_t wszBuf[256];
+		LoadString(g_appModule.m_hInst, IDS_ENABLED, wszBuf, 256);
+		m_strStatus = wszBuf;
+	}
+
+	virtual void LoadLogo(bool bDisabledImage)
+	{
+		delete m_pImageLogo;
+		m_pImageLogo = bDisabledImage ? new Image(L"PwdManager_disabled.png") : new Image(L"PwdManager.png");
+	}
 };
 
