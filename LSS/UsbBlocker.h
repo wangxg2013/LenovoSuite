@@ -51,7 +51,7 @@ protected:
 	virtual void LoadLogo(bool bDisabledImage)
 	{
 		delete m_pImageLogo;
-		m_pImageLogo = bDisabledImage ? new Image(L"OKR_disabled.png") : new Image(L"OKR.png");
+		m_pImageLogo = bDisabledImage ? new Image(L"USB_disabled.png") : new Image(L"USB.png");
 	}
 };
 

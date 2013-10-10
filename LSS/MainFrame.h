@@ -17,6 +17,7 @@ public:
 
 	BEGIN_MSG_MAP(CMainFrame)
 		MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBkGnd)
+		//MESSAGE_HANDLER(WM_NCPAINT, OnNcPaint)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)
@@ -117,6 +118,18 @@ public:
 		}
 	}
 
+	CRect CalcWindowPos(CRect &rcDisplay)
+	{
+		int nWidth = (int) (rcDisplay.Width() / 2.5f);
+		int nHeight = (int) (nWidth * 0.9f);
+		int nPosX = (rcDisplay.Width() - nWidth) / 2;
+		int nPosY = (rcDisplay.Height() - nHeight) / 2;
+		WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
+
+		return rcMain;
+	}
+
+protected:
 	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		HDC hdc = GetDC();
@@ -130,16 +143,10 @@ public:
 		return 0;
 	}
 
-public:
-	CRect CalcWindowPos(CRect &rcDisplay)
+	LRESULT OnNcPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		int nWidth = (int) (rcDisplay.Width() / 2.5f);
-		int nHeight = (int) (nWidth * 0.9f);
-		int nPosX = (rcDisplay.Width() - nWidth) / 2;
-		int nPosY = (rcDisplay.Height() - nHeight) / 2;
-		WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
-
-		return rcMain;
+		bHandled = TRUE;
+		return 1L;
 	}
 
 private:

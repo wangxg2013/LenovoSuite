@@ -6,7 +6,7 @@ class CAppBox : public CWindowImpl<CAppBox>
 {
 public:
 	DECLARE_WND_CLASS(L"AppBox")
-
+	
 	BEGIN_MSG_MAP(CAppBox)
 		MESSAGE_HANDLER(WM_PAINT, OnPaint)
 		MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBkGnd)
@@ -19,6 +19,7 @@ public:
 		m_colorText = RGB(0xf7, 0x7a, 0x00);
 		m_colorText2 = RGB(255, 255, 255);
 		m_brBk.CreateSolidBrush(RGB(200, 200, 200));
+		m_brBkFrame = ::CreateSolidBrush(RGB(220, 220, 220));
 		m_brBk2.CreateSolidBrush(m_colorText);
 		m_bHighLight = false;
 
@@ -46,6 +47,12 @@ protected:
 	CString m_strStatus;
 	Image *m_pImageLogo = NULL;
 
+	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = true;
+		return 1L;
+	}
+
 	LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		CRect rcClient;
@@ -57,8 +64,12 @@ protected:
 		wchar_t wszBuf[128];
 		::GetWindowText(m_hWnd, wszBuf, 128);
 
+		
+
 		PAINTSTRUCT ps;
 		BeginPaint(&ps);
+		PaintBackground(ps.hdc);
+
 		Graphics graphics(ps.hdc);
 
 		::SetBkMode(ps.hdc, TRANSPARENT);
@@ -85,34 +96,6 @@ protected:
 		OnDrawImage(graphics, rcBound);
 
 		EndPaint(&ps);
-
-		bHandled = true;
-		return 0L;
-	}
-
-	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		CRect rcClient;
-		GetClientRect(&rcClient);
-		int y = rcClient.bottom + m_nYLinePos;
-
-
-		HDC hdc = GetDC();
-		HGDIOBJ hOldPen = SelectObject(hdc, GetStockObject(NULL_PEN));
-		HGDIOBJ hOldBrush = SelectObject(hdc, m_bHighLight ? m_brBk2 : m_brBk);
-		RoundRect(hdc, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, 8, 8);
-		SelectObject(hdc, hOldBrush);
-		SelectObject(hdc, hOldPen);
-
-		hOldPen = SelectObject(hdc, m_penLineA);
-		MoveToEx(hdc, 0, y, NULL);
-		LineTo(hdc, rcClient.right - 1, y);
-		SelectObject(hdc, m_penLineB);
-		MoveToEx(hdc, 0, y + 1, NULL);
-		LineTo(hdc, rcClient.right - 1, y + 1);
-		SelectObject(hdc, hOldPen);
-
-		ReleaseDC(hdc);
 
 		bHandled = true;
 		return 0L;
@@ -162,6 +145,7 @@ private:
 	COLORREF m_colorText2;
 	COLORREF m_colorTitle;
 
+	CBrush m_brBkFrame;
 	CBrush m_brBk;
 	CBrush m_brBk2;
 	bool m_bHighLight;
@@ -199,6 +183,28 @@ private:
 		int nHeight = m_pImageLogo->GetHeight() * nWidth / m_pImageLogo->GetWidth();
 
 		g.DrawImage(m_pImageLogo, rc.left + (rc.Width() - nWidth) / 2, rc.top + (rc.Height() - nHeight) / 2, nWidth, nHeight);
+	}
+
+	void PaintBackground(HDC hdc)
+	{
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		int y = rcClient.bottom + m_nYLinePos;
+
+		HGDIOBJ hOldPen = SelectObject(hdc, GetStockObject(NULL_PEN));
+		HGDIOBJ hOldBrush = SelectObject(hdc, m_bHighLight ? m_brBk2 : m_brBk);
+		FillRect(hdc, &rcClient, m_brBkFrame);
+		RoundRect(hdc, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, 8, 8);
+		SelectObject(hdc, hOldBrush);
+		SelectObject(hdc, hOldPen);
+
+		hOldPen = SelectObject(hdc, m_penLineA);
+		MoveToEx(hdc, 0, y, NULL);
+		LineTo(hdc, rcClient.right - 1, y);
+		SelectObject(hdc, m_penLineB);
+		MoveToEx(hdc, 0, y + 1, NULL);
+		LineTo(hdc, rcClient.right - 1, y + 1);
+		SelectObject(hdc, hOldPen);
 	}
 };
 
