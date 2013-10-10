@@ -7,7 +7,6 @@ class CUsbBlocker :	public CAppBox
 {
 public:
 	BEGIN_MSG_MAP(CUsbBlocker)
-		MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp);
 		CHAIN_MSG_MAP(CAppBox)
 	END_MSG_MAP()
 public:
@@ -19,13 +18,10 @@ public:
 	{
 	}
 protected:
-	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	virtual const CString& GetRunCmd()
 	{
-		WinExec("calc.exe", SW_SHOW);
-		bHandled = true;
-		return 0L;
+		return g_appConfig.GetRunCmdUSBBlocker();
 	}
-
 	
 	virtual bool IsInstalled()
 	{

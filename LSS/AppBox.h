@@ -131,7 +131,12 @@ protected:
 
 	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		WinExec("Notepad.exe", SW_SHOW);
+		const CString &strCmd = GetRunCmd();
+		char szCmd[512];
+
+		sprintf_s(szCmd, "%S", (LPCWSTR)strCmd);
+
+		WinExec(szCmd, SW_SHOW);
 		bHandled = true;
 		return 0L;
 	}
@@ -139,6 +144,7 @@ protected:
 	virtual bool IsInstalled() = 0;
 	virtual void LoadStatusText() = 0;
 	virtual void LoadLogo(bool bDisabledImage) = 0;
+	virtual const CString& GetRunCmd() = 0;
 private:
 	bool m_bInstalled = false;
 	COLORREF m_colorText;

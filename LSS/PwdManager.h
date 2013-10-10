@@ -28,6 +28,11 @@ protected:
 			return false;
 		}
 	}
+	
+	virtual const CString& GetRunCmd()
+	{
+		return g_appConfig.GetRunCmdPwdMgr();
+	}
 
 	virtual void LoadStatusText()
 	{

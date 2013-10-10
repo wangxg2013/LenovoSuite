@@ -16,6 +16,11 @@ public:
 	{
 	}
 protected:
+	virtual const CString& GetRunCmd()
+	{
+		return g_appConfig.GetRunCmdAPS();
+	}
+
 	virtual bool IsInstalled()
 	{
 		HKEY hKeyOKR = NULL;
