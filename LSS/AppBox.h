@@ -17,6 +17,8 @@ public:
 	END_MSG_MAP()
 public:
 	CAppBox(){
+		m_bInstalled = false;
+
 		m_colorText = RGB(0xf7, 0x7a, 0x00);
 		m_colorText2 = RGB(255, 255, 255);
 		m_brBk.CreateSolidBrush(RGB(200, 200, 200));
@@ -31,6 +33,9 @@ public:
 		m_fontMsBlack.CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0,
 			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 			L"Î¢ÈíÑÅºÚ");
+
+		
+		m_pImageLogo = NULL;
 	}
 
 	virtual ~CAppBox()
@@ -46,12 +51,16 @@ public:
 		m_btnReInstall.SetText(L"Reinstall");
 		m_btnReInstall.Create(m_hWnd, (LPRECT)&rcBtn);
 		m_btnReInstall.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
+
+		LONG lStyle  = GetWindowLong(GWL_STYLE);
+		lStyle = lStyle & (~WS_CLIPCHILDREN);
+		SetWindowLong(GWL_STYLE, lStyle);
 		
 		UpdateStatus(true);
 	}
 protected:
 	CString m_strStatus;
-	Image *m_pImageLogo = NULL;
+	Image *m_pImageLogo;
 
 	LRESULT OnEraseBkGnd(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
@@ -157,7 +166,7 @@ protected:
 	virtual void LoadLogo(bool bDisabledImage) = 0;
 	virtual const CString& GetRunCmd() = 0;
 private:
-	bool m_bInstalled = false;
+	bool m_bInstalled;
 	COLORREF m_colorText;
 	COLORREF m_colorText2;
 	COLORREF m_colorTitle;
