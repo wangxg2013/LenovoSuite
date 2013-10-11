@@ -67,7 +67,7 @@
     <ClInclude Include="WndInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="USBBlockerInfo.h">
+    <ClInclude Include="WndIntro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -102,7 +102,7 @@
     <ClCompile Include="WndInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="USBBlockerInfo.cpp">
+    <ClCompile Include="WndIntro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

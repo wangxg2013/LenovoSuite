@@ -1,4 +1,5 @@
 #pragma once
+#include "resource.h"
 #include "LSS.h"
 #include "BtnSimple.h"
 #include "IShowInfo.h"
@@ -50,8 +51,11 @@ public:
 
 	virtual void OnInitUpdate()
 	{
+		wchar_t wszBuf[256];
+		LoadString(g_appModule.m_hInst, IDS_REINSTALL, wszBuf, 255);
+
 		const CRect rcBtn = CalcReinstallBtnPos();
-		m_btnReInstall.SetText(L"Reinstall");
+		m_btnReInstall.SetText(wszBuf);
 		m_btnReInstall.Create(m_hWnd, (LPRECT)&rcBtn);
 		m_btnReInstall.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
 
@@ -155,6 +159,8 @@ protected:
 	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = true;
+
+		if (!m_bInstalled) return 0L;
 
 		if (m_pShowInfo != NULL){
 			bool bShow = m_pShowInfo->ShowInfo(m_hWnd);

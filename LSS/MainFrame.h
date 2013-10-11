@@ -9,8 +9,7 @@
 #include "PwdManager.h"
 #include "APS.h"
 #include "IShowInfo.h"
-#include "WndInfo.h"
-#include "USBBlockerInfo.h"
+#include "WndIntro.h"
 
 class CMainFrame : public CFrameWindowImpl<CMainFrame>,
 	public IShowInfo
@@ -24,6 +23,7 @@ public:
 		//MESSAGE_HANDLER(WM_NCPAINT, OnNcPaint)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
+		MESSAGE_HANDLER(WM_CLOSE, OnClose)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)
 	END_MSG_MAP()
 
@@ -37,7 +37,6 @@ public:
 		m_pOneKeyRecovery = NULL;
 		m_pPwdManager = NULL;
 		m_pAPS = NULL;
-		m_pWndInfo = NULL;
 	}
 
 	virtual ~CMainFrame()
@@ -67,6 +66,17 @@ public:
 	{
 		::DeleteObject(m_brushBk);
 		::PostQuitMessage(0);
+		return 0;
+	}
+
+	LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
+	{
+		if (m_wndIntro.m_hWnd != NULL){
+			m_wndIntro.DestroyWindow();
+		}
+		else{
+			DestroyWindow();
+		}
 		return 0;
 	}
 
@@ -140,16 +150,38 @@ public:
 
 	virtual bool ShowInfo(HWND hWndSource)
 	{
-		ATLASSERT(m_pWndInfo == NULL);
+		ATLASSERT(m_wndIntro.m_hWnd == NULL);
+		const int nLen = 512;
+		wchar_t wszBuf[nLen];
+
 		if (m_pUsbBlocker != NULL && m_pUsbBlocker->m_hWnd == hWndSource){
-			m_pWndInfo = new CUSBBlockerInfo();
+			m_wndIntro.SetImage(L"USB.png");
+			LoadString(g_appModule.m_hInst, IDS_USB_BLOCKER, wszBuf, nLen-1);			
 		}
+		else if (m_pOneKeyRecovery != NULL && m_pOneKeyRecovery->m_hWnd == hWndSource){
+			m_wndIntro.SetImage(L"OKR.png");
+			LoadString(g_appModule.m_hInst, IDS_OKR, wszBuf, nLen - 1);
+		}
+		else if (m_pPwdManager != NULL && m_pPwdManager->m_hWnd == hWndSource){
+			m_wndIntro.SetImage(L"PwdManager.png");
+			LoadString(g_appModule.m_hInst, IDS_PWD_MGR, wszBuf, nLen - 1);
+		}
+		else if (m_pAPS != NULL && m_pAPS->m_hWnd == hWndSource){
+			m_wndIntro.SetImage(L"APS.png");
+			LoadString(g_appModule.m_hInst, IDS_APS, wszBuf, nLen - 1);
+		}
+		else{
+			return false;
+		}
+
+		m_wndIntro.SetTitle(wszBuf);
 
 		CRect rcClient;
 		GetClientRect(&rcClient);
-		m_pWndInfo->Create(m_hWnd, &rcClient);
-		m_pWndInfo->SetWindowPos(HWND_TOP, rcClient, SWP_NOMOVE | SWP_NOSIZE);
-		m_pWndInfo->ShowWindow(SW_SHOW);
+		m_wndIntro.Create(m_hWnd, &rcClient);
+		m_wndIntro.OnInitUpdate();
+		m_wndIntro.SetWindowPos(HWND_TOP, rcClient, SWP_NOMOVE | SWP_NOSIZE);
+		m_wndIntro.ShowWindow(SW_SHOW);
 		return true;
 	}
 
@@ -181,7 +213,7 @@ private:
 	COneKeyRecovery *m_pOneKeyRecovery;
 	CPwdManager *m_pPwdManager;
 	CAPS *m_pAPS;
-	CWndInfo *m_pWndInfo;
+	CWndIntro m_wndIntro;
 
 	CRect CalcWndPosForUsbBlocker()
 	{
