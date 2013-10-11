@@ -8,6 +8,7 @@ CBtnSimple::CBtnSimple()
 	m_pBrushText = new SolidBrush(Color(250, 250, 250));
 	m_pBrushBk = new SolidBrush(Color(91, 155, 213));
 	m_pBrushBk2 = new SolidBrush(Color(110, 175, 233));
+	m_bHighLight = false;
 }
 
 

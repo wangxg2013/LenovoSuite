@@ -8,8 +8,12 @@
 #include "OneKeyRecovery.h"
 #include "PwdManager.h"
 #include "APS.h"
+#include "IShowInfo.h"
+#include "WndInfo.h"
+#include "USBBlockerInfo.h"
 
-class CMainFrame : public CFrameWindowImpl<CMainFrame>
+class CMainFrame : public CFrameWindowImpl<CMainFrame>,
+	public IShowInfo
 {
 public:
 	// DECLARE_FRAME_WND_CLASS(NULL, IDR_MAINFRAME)
@@ -33,6 +37,7 @@ public:
 		m_pOneKeyRecovery = NULL;
 		m_pPwdManager = NULL;
 		m_pAPS = NULL;
+		m_pWndInfo = NULL;
 	}
 
 	virtual ~CMainFrame()
@@ -87,6 +92,7 @@ public:
 		m_pUsbBlocker = new CUsbBlocker();
 		LoadString(g_appModule.m_hInst, IDS_USB_BLOCKER, wszBoxName, 120);
 		m_pUsbBlocker->SetYLinePos(yLinePos);
+		m_pUsbBlocker->SetShowInfo(this);
 		m_pUsbBlocker->Create(m_hWnd, rcUsbBlocker, wszBoxName);
 		m_pUsbBlocker->OnInitUpdate();
 
@@ -95,6 +101,7 @@ public:
 		m_pOneKeyRecovery = new COneKeyRecovery();
 		LoadString(g_appModule.m_hInst, IDS_OKR, wszBoxName, 120);
 		m_pOneKeyRecovery->SetYLinePos(yLinePos);
+		m_pOneKeyRecovery->SetShowInfo(this);
 		m_pOneKeyRecovery->Create(m_hWnd, rcOKR, wszBoxName);
 		m_pOneKeyRecovery->OnInitUpdate();
 
@@ -103,6 +110,7 @@ public:
 		m_pPwdManager = new CPwdManager();
 		LoadString(g_appModule.m_hInst, IDS_PWD_MGR, wszBoxName, 120);
 		m_pPwdManager->SetYLinePos(yLinePos);
+		m_pPwdManager->SetShowInfo(this);
 		m_pPwdManager->Create(m_hWnd, rcPwdManager, wszBoxName);
 		m_pPwdManager->OnInitUpdate();
 
@@ -113,6 +121,7 @@ public:
 			m_pAPS = new CAPS();
 			LoadString(g_appModule.m_hInst, IDS_APS, wszBoxName, 120);
 			m_pAPS->SetYLinePos(yLinePos);
+			m_pAPS->SetShowInfo(this);
 			m_pAPS->Create(m_hWnd, rcAPS, wszBoxName);
 			m_pAPS->OnInitUpdate();
 		}
@@ -127,6 +136,21 @@ public:
 		WTL::CRect rcMain(nPosX, nPosY, nPosX + nWidth, nPosY + nHeight);
 
 		return rcMain;
+	}
+
+	virtual bool ShowInfo(HWND hWndSource)
+	{
+		ATLASSERT(m_pWndInfo == NULL);
+		if (m_pUsbBlocker != NULL && m_pUsbBlocker->m_hWnd == hWndSource){
+			m_pWndInfo = new CUSBBlockerInfo();
+		}
+
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		m_pWndInfo->Create(m_hWnd, &rcClient);
+		m_pWndInfo->SetWindowPos(HWND_TOP, rcClient, SWP_NOMOVE | SWP_NOSIZE);
+		m_pWndInfo->ShowWindow(SW_SHOW);
+		return true;
 	}
 
 protected:
@@ -157,6 +181,7 @@ private:
 	COneKeyRecovery *m_pOneKeyRecovery;
 	CPwdManager *m_pPwdManager;
 	CAPS *m_pAPS;
+	CWndInfo *m_pWndInfo;
 
 	CRect CalcWndPosForUsbBlocker()
 	{

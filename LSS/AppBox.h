@@ -1,6 +1,7 @@
 #pragma once
 #include "LSS.h"
 #include "BtnSimple.h"
+#include "IShowInfo.h"
 using namespace Gdiplus;
 
 class CAppBox : public CWindowImpl<CAppBox>
@@ -36,6 +37,7 @@ public:
 
 		
 		m_pImageLogo = NULL;
+		m_pShowInfo = NULL;
 	}
 
 	virtual ~CAppBox()
@@ -43,7 +45,8 @@ public:
 		delete m_pImageLogo;
 	}
 
-	void SetYLinePos(int y){ m_nYLinePos = y; }
+	inline void SetYLinePos(int y){ m_nYLinePos = y; }
+	inline void SetShowInfo(IShowInfo *pShowInfo){ m_pShowInfo = pShowInfo; }
 
 	virtual void OnInitUpdate()
 	{
@@ -151,13 +154,19 @@ protected:
 
 	LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		bHandled = true;
+
+		if (m_pShowInfo != NULL){
+			bool bShow = m_pShowInfo->ShowInfo(m_hWnd);
+			if (bShow) return 0L;
+		}
+
 		const CString &strCmd = GetRunCmd();
 		char szCmd[512];
 
 		sprintf_s(szCmd, "%S", (LPCWSTR)strCmd);
 
 		WinExec(szCmd, SW_SHOW);
-		bHandled = true;
 		return 0L;
 	}
 
@@ -182,6 +191,7 @@ private:
 	int m_nYLinePos;
 
 	CBtnSimple m_btnReInstall;
+	IShowInfo *m_pShowInfo;
 
 	void UpdateStatus(bool bForce = false)
 	{
