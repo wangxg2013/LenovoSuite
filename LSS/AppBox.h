@@ -1,5 +1,6 @@
 #pragma once
 #include "LSS.h"
+#include "BtnSimple.h"
 using namespace Gdiplus;
 
 class CAppBox : public CWindowImpl<CAppBox>
@@ -22,7 +23,7 @@ public:
 		m_brBkFrame = ::CreateSolidBrush(RGB(220, 220, 220));
 		m_brBk2.CreateSolidBrush(m_colorText);
 		m_bHighLight = false;
-
+		
 		m_colorTitle = RGB(80, 80, 80);
 
 		m_penLineA.CreatePen(PS_SOLID, 1, RGB(180, 180, 180));
@@ -41,6 +42,11 @@ public:
 
 	virtual void OnInitUpdate()
 	{
+		const CRect rcBtn = CalcReinstallBtnPos();
+		m_btnReInstall.SetText(L"Reinstall");
+		m_btnReInstall.Create(m_hWnd, (LPRECT)&rcBtn);
+		m_btnReInstall.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
+		
 		UpdateStatus(true);
 	}
 protected:
@@ -113,6 +119,11 @@ protected:
 
 	LRESULT OnMouseMove(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		if (!m_bInstalled){
+			bHandled = TRUE;
+			return 0L;
+		}
+
 		if (m_bHighLight != true){
 			m_bHighLight = true;
 			Invalidate();
@@ -159,8 +170,9 @@ private:
 	CPen m_penLineA;
 	CPen m_penLineB;
 	CFont m_fontMsBlack;
-
 	int m_nYLinePos;
+
+	CBtnSimple m_btnReInstall;
 
 	void UpdateStatus(bool bForce = false)
 	{
@@ -172,11 +184,15 @@ private:
 
 			if (bInstalled){
 				LoadStatusText();
+
+				m_btnReInstall.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
 			}
 			else{
 				wchar_t wszBuf[250];
 				LoadString(g_appModule.m_hInst, IDS_NOT_INSTALLED, wszBuf, 250);
 				m_strStatus = wszBuf;
+
+				m_btnReInstall.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			}
 
 			Invalidate();
@@ -211,6 +227,27 @@ private:
 		MoveToEx(hdc, 0, y + 1, NULL);
 		LineTo(hdc, rcClient.right - 1, y + 1);
 		SelectObject(hdc, hOldPen);
+	}
+
+	const CRect CalcReinstallBtnPos()
+	{
+		float fWidthRatio = 0.3f;
+		float fHW = 0.4f;
+
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		rcClient.bottom += m_nYLinePos;
+
+		float fWidth = rcClient.Width() * fWidthRatio;
+		float fHeight = fWidth * fHW;
+
+		CRect rc;
+		rc.left = (LONG)((rcClient.Width() - fWidth) / 2);
+		rc.right = (LONG)(rc.left + fWidth);
+		rc.top = (LONG)((rcClient.Height() - fHeight) / 2);
+		rc.bottom = (LONG)(rc.top + fHeight);
+
+		return rc;
 	}
 };
 
