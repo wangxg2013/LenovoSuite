@@ -1,5 +1,6 @@
 #pragma once
 #include "WndInfo.h"
+#include "SimpleCheck.h"
 using namespace Gdiplus;
 
 class CWndIntro : public CWndInfo
@@ -16,6 +17,8 @@ public:
 	inline void SetTitle(const CString& strTitle){ m_strTitle = strTitle; }
 	inline void SetText(const CString& strText){ m_strText = strText; }
 	inline void SetImage(const CString& strImageFile){ m_pImage = new Image(strImageFile); }
+
+	virtual void OnInitUpdate();
 protected:
 	LRESULT OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 private:
@@ -24,5 +27,7 @@ private:
 	CString m_strTitle;
 	CString m_strText;
 	CRect m_rcImage;
+
+	CSimpleCheck m_check;
 };
 

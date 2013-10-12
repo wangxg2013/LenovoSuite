@@ -70,6 +70,9 @@
     <ClInclude Include="WndIntro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleCheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,6 +106,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WndIntro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -54,3 +54,19 @@ LRESULT CWndIntro::OnPaint(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bH
 	bHandled = TRUE;
 	return 0L;
 }
+
+void CWndIntro::OnInitUpdate()
+{
+	__super::OnInitUpdate();
+
+	int nCheckWidth = 16;
+
+	CRect rcCheck;
+	rcCheck.left = 20;
+	rcCheck.top = m_iPosLineY + 20;
+	rcCheck.right = rcCheck.left + nCheckWidth;
+	rcCheck.bottom = rcCheck.top + nCheckWidth;
+
+	m_check.Create(m_hWnd, rcCheck);
+	m_check.ShowWindow(SW_SHOW);
+}
